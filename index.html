@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S2S Postback Testing System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.0/axios.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-chart-line"></i>
+                <span>S2S Tracker</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#dashboard" class="nav-link active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#offers" class="nav-link" data-section="offers">
+                    <i class="fas fa-gift"></i> Offers
+                </a>
+                <a href="#testing" class="nav-link" data-section="testing">
+                    <i class="fas fa-flask"></i> Testing
+                </a>
+                <a href="#analytics" class="nav-link" data-section="analytics">
+                    <i class="fas fa-chart-bar"></i> Analytics
+                </a>
+                <a href="#settings" class="nav-link" data-section="settings">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="container">
+                <h1 class="section-title">Dashboard</h1>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-clicks">0</h3>
+                            <p>Total Clicks</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-conversions">0</h3>
+                            <p>Conversions</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="conversion-rate">0%</h3>
+                            <p>Conversion Rate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card glass">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-revenue">$0.00</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-container glass">
+                        <h3>Conversion Trends</h3>
+                        <canvas id="conversionChart"></canvas>
+                    </div>
+                    <div class="chart-container glass">
+                        <h3>Traffic Sources</h3>
+                        <canvas id="trafficChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-container glass">
+                    <h3>Recent Activity</h3>
+                    <div class="activity-list" id="activityList">
+                        <!-- Activity items will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Offers Section -->
+        <section id="offers" class="section">
+            <div class="container">
+                <h1 class="section-title">Offer Management</h1>
+                
+                <div class="offers-header">
+                    <button class="btn btn-primary" id="createOfferBtn">
+                        <i class="fas fa-plus"></i> Create New Offer
+                    </button>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search offers..." id="offerSearch">
+                    </div>
+                </div>
+
+                <div class="offers-grid" id="offersGrid">
+                    <!-- Pre-built offers will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testing Section -->
+        <section id="testing" class="section">
+            <div class="container">
+                <h1 class="section-title">S2S Testing</h1>
+                
+                <div class="testing-container">
+                    <div class="test-form glass">
+                        <h3>Test Postback</h3>
+                        <form id="testForm">
+                            <div class="form-group">
+                                <label>Postback URL</label>
+                                <input type="text" id="postbackUrl" value="https://tr.optimawall.com/pbtr" placeholder="Enter postback URL">
+                            </div>
+                            <div class="form-group">
+                                <label>Transaction ID</label>
+                                <input type="text" id="transactionId" placeholder="Enter transaction ID">
+                            </div>
+                            <div class="form-group">
+                                <label>Goal</label>
+                                <input type="text" id="goal" placeholder="Enter goal">
+                            </div>
+                            <div class="form-group">
+                                <label>Additional Parameters</label>
+                                <textarea id="additionalParams" placeholder="key1=value1&key2=value2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Test Postback
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="test-results glass">
+                        <h3>Test Results</h3>
+                        <div class="result-item">
+                            <span class="result-label">Status:</span>
+                            <span class="result-value" id="testStatus">Ready to test</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Response:</span>
+                            <span class="result-value" id="testResponse">-</span>
+                        </div>
+                        <div class="result-item">
+                            <span class="result-label">Response Time:</span>
+                            <span class="result-value" id="testTime">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section">
+            <div class="container">
+                <h1 class="section-title">Analytics</h1>
+                
+                <div class="analytics-filters">
+                    <select id="dateRange">
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                    </select>
+                    <select id="offerFilter">
+                        <option value="all">All Offers</option>
+                    </select>
+                </div>
+
+                <div class="analytics-grid">
+                    <div class="analytics-card glass">
+                        <h3>Geographic Distribution</h3>
+                        <canvas id="geoChart"></canvas>
+                    </div>
+                    <div class="analytics-card glass">
+                        <h3>Device Types</h3>
+                        <canvas id="deviceChart"></canvas>
+                    </div>
+                    <div class="analytics-card glass">
+                        <h3>Operating Systems</h3>
+                        <canvas id="osChart"></canvas>
+                    </div>
+                    <div class="analytics-card glass">
+                        <h3>Network Providers</h3>
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="detailed-analytics glass">
+                    <h3>Detailed Analytics</h3>
+                    <div class="analytics-table">
+                        <table id="analyticsTable">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Country</th>
+                                    <th>City</th>
+                                    <th>Device</th>
+                                    <th>OS</th>
+                                    <th>Network</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analyticsTableBody">
+                                <!-- Analytics data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="container">
+                <h1 class="section-title">Settings</h1>
+                
+                <div class="settings-container">
+                    <div class="settings-card glass">
+                        <h3>Postback Configuration</h3>
+                        <form id="settingsForm">
+                            <div class="form-group">
+                                <label>Default Postback URL</label>
+                                <input type="text" id="defaultPostbackUrl" value="https://tr.optimawall.com/pbtr">
+                            </div>
+                            <div class="form-group">
+                                <label>Default Transaction ID Parameter</label>
+                                <input type="text" id="defaultTransactionParam" value="transaction_id">
+                            </div>
+                            <div class="form-group">
+                                <label>Default Goal Parameter</label>
+                                <input type="text" id="defaultGoalParam" value="goal">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card glass">
+                        <h3>Data Management</h3>
+                        <div class="settings-actions">
+                            <button class="btn btn-secondary" id="exportDataBtn">
+                                <i class="fas fa-download"></i> Export Data
+                            </button>
+                            <button class="btn btn-danger" id="clearDataBtn">
+                                <i class="fas fa-trash"></i> Clear All Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Offer Landing Page Modal -->
+    <div id="offerModal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2 id="offerTitle">Win $1000 Cash Prize!</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="offer-image">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <p class="offer-description">
+                    Enter our exclusive sweepstakes and win amazing cash prizes! 
+                    Complete the form below to participate.
+                </p>
+                <form id="offerForm">
+                    <div class="form-group">
+                        <input type="text" id="userName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="userEmail" placeholder="Enter your email address" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">
+                        <i class="fas fa-trophy"></i> Enter Now!
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Offer Modal -->
+    <div id="createOfferModal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2>Create New Offer</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="createOfferForm">
+                    <div class="form-group">
+                        <label>Offer Title</label>
+                        <input type="text" id="newOfferTitle" placeholder="Enter offer title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Offer Description</label>
+                        <textarea id="newOfferDescription" placeholder="Enter offer description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Offer Type</label>
+                        <select id="newOfferType">
+                            <option value="sweepstakes">Sweepstakes</option>
+                            <option value="survey">Survey</option>
+                            <option value="download">Download</option>
+                            <option value="subscription">Subscription</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Payout</label>
+                        <input type="number" id="newOfferPayout" placeholder="Enter payout amount" step="0.01">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Offer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
