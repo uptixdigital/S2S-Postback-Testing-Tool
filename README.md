@@ -1,2 +1,2 @@
-# S2S-Tracking-Tester
-CPA Network S2S Offer Testing Tools
+# S2S-Postback Tracking-Testing tool
+CPA Network S2S Postback Offer Testing Tools
